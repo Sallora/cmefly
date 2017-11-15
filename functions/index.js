@@ -81,3 +81,22 @@ exports.GetFlightDetails = functions.https.onRequest((request, response) => {
         );
     });
 });
+
+
+// Retrieve the latest flight from the array (the others are old)
+response
+  .type("json")
+  .status(200)
+  .send(flightData);
+})
+.catch(error => {
+// If something went wrong (such as an invalid tail number), return a normalised response
+// this is to prevent the function 'crashing' and messing up the logs on Firebase. It's
+// always good to handle errors in a tidy way when they can happen often.
+return response
+  .status(500)
+  .send(
+    `Unable to retrieve flight with tail number '${tailNumber}' found`
+  );
+});
+});
