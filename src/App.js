@@ -1,67 +1,65 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 
+/* 
+ * Things for Lora to read
+ * ---
+ * Set State: https://reactjs.org/docs/react-component.html#setstate
+ */
+
 class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      flights: []
-    };
-  }
-  componentDidMount() {
-    // this.setState({
-    //   flights: firebase.get('flights'),
-    // });
-    const myHeaders = new Headers();
-    myHeaders.append("Access-Control-Allow-Origin", "*");
+  state = {
+    tailNumber: "BAW4600",
+    flightData: null
+  };
 
-    const myInit = {
-      method: "GET",
-      headers: myHeaders,
-      mode: "cors",
-      cache: "default"
-    };
-
-    window
-      .fetch(
-        "https://us-central1-finaljs-c5415.cloudfunctions.net/GetFlightDetails?tailNumber=BAW4600"
-      )
-      .then(response => {
-        console.log("response", response);
-        this.setState({
-          flights: response
-        })
-      })
-      .catch(err => {
-        console.log("error", err);
-      });
+  fetchFlightDetails(tailNumber) {
+    // Fetch returns a promise
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+    // https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+    fetch(
+      `http://localhost:5000/finaljs-c5415/us-central1/GetFlightDetails?tailNumber=${tailNumber}`,
+      {}
+    )
+      // https://developer.mozilla.org/en-US/docs/Web/API/Body/json
+      .then(response => response.json()) // Parse the JSON into Javascript
+      .then(flightData => this.setState({ flightData })); //same as this.setState({ flightData: flightData });
   }
-  render() {
+
+  renderFlightData() {
+    const { flightData } = this.state;
+
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">CMEFLY</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <h2
-          style={{
-            color: "red"
-            backgroundColor: "blue",
-            marginBottom: "20px"
+      <ul>
+        {flightData.FlightInfoStatusResult.flights.map((flight, i) => {
+          return <li key={i}>{flight.faFlightID}</li>;
+        })}
+      </ul>
+    );
+  }
+
+  render() {
+    const { tailNumber, flightData } = this.state;
+
+    return (
+      <div>
+        <h1>Get flight number</h1>
+        <input
+          type="text"
+          defaultValue={tailNumber}
+          onChange={evt => {
+            this.setState({ tailNumber: evt.target.value });
+          }}
+        />
+        <button
+          onClick={() => {
+            this.fetchFlightDetails(tailNumber);
           }}
         >
-        <button className="btn btn-primary"></button>
-          Flights
-        </h2>
-        <ul>
-          {this.state.flights.map(flight => {
-            <li>{flight.name}</li>
-          })}
-        </ul>
+          Get Flight
+        </button>
+
+        {flightData && this.renderFlightData()}
       </div>
     );
   }

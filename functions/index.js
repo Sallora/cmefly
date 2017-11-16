@@ -1,6 +1,5 @@
 const functions = require("firebase-functions");
 const request = require("request-promise");
-
 /*
  * Environmental variables
  * ---
@@ -46,6 +45,9 @@ function fetchFlights(tailNumber) {
  * Response: http://expressjs.com/en/4x/api.html#res
  */
 exports.GetFlightDetails = functions.https.onRequest((request, response) => {
+  response.set("Access-Control-Allow-Origin", "*");
+  response.set("Access-Control-Allow-Methods", "GET, POST");
+
   // Check that we have a tail number from the request
   const tailNumber = request.query.tailNumber;
   if (!tailNumber) {

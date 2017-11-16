@@ -1,0 +1,35 @@
+[debug] [2017-11-16T19:53:21.783Z] ----------------------------------------------------------------------
+[debug] [2017-11-16T19:53:21.785Z] Command:       /usr/local/Cellar/node/8.7.0/bin/node /usr/local/bin/firebase serve --only functions
+[debug] [2017-11-16T19:53:21.785Z] CLI Version:   3.15.0
+[debug] [2017-11-16T19:53:21.785Z] Platform:      darwin
+[debug] [2017-11-16T19:53:21.785Z] Node Version:  v8.7.0
+[debug] [2017-11-16T19:53:21.786Z] Time:          Thu Nov 16 2017 19:53:21 GMT+0000 (GMT)
+[debug] [2017-11-16T19:53:21.786Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2017-11-16T19:53:21.799Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2017-11-16T19:53:21.799Z] > authorizing via signed-in user
+[debug] [2017-11-16T19:53:21.800Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2017-11-16T19:53:21.801Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token { refresh_token: '1/n_XUCsAp_0fByYCWoVFaEv7jGYfbFLFYA6wzgukJWEQ',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Thu Nov 16 2017 19:53:21 GMT+0000 (GMT)
+[debug] [2017-11-16T19:53:21.991Z] <<< HTTP RESPONSE 200
+[debug] [2017-11-16T19:53:22.001Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/finaljs-c5415  
+ Thu Nov 16 2017 19:53:22 GMT+0000 (GMT)
+[debug] [2017-11-16T19:53:22.883Z] <<< HTTP RESPONSE 200
+[debug] [2017-11-16T19:53:22.884Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/finaljs-c5415/tokens  
+ Thu Nov 16 2017 19:53:22 GMT+0000 (GMT)
+[debug] [2017-11-16T19:53:23.813Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/jontaylor/Sites/cmefly'...
+[info] 
+[info] i  functions: Preparing to emulate functions.
+[debug] [2017-11-16T19:53:24.322Z] >>> HTTP REQUEST GET https://appengine.googleapis.com/v1/apps/finaljs-c5415  
+ Thu Nov 16 2017 19:53:24 GMT+0000 (GMT)
+[debug] [2017-11-16T19:53:24.323Z] >>> HTTP REQUEST GET https://apikeys.googleapis.com/v1/projects/finaljs-c5415/apiKeys  
+ Thu Nov 16 2017 19:53:24 GMT+0000 (GMT)
+[debug] [2017-11-16T19:53:25.137Z] <<< HTTP RESPONSE 200
+[debug] [2017-11-16T19:53:25.569Z] <<< HTTP RESPONSE 200
+[info] ✔  functions: GetFlightDetails: http://localhost:5000/finaljs-c5415/us-central1/GetFlightDetails
