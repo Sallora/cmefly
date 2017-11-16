@@ -8,6 +8,7 @@ const request = require("request-promise");
  * (reference here: https://firebase.google.com/docs/functions/config-env)
  * If the variable is not set, it falls back to default (useful for local development)
  */
+console.log("config", functions.config());
 const config = functions.config().cmefly;
 const API_ENDPOINT = "https://flightxml.flightaware.com/json/FlightXML3";
 const API_KEY = "salomidoulora";
@@ -80,23 +81,4 @@ exports.GetFlightDetails = functions.https.onRequest((request, response) => {
           `Unable to retrieve flight with tail number '${tailNumber}' found`
         );
     });
-});
-
-
-// Retrieve the latest flight from the array (the others are old)
-response
-  .type("json")
-  .status(200)
-  .send(flightData);
-})
-.catch(error => {
-// If something went wrong (such as an invalid tail number), return a normalised response
-// this is to prevent the function 'crashing' and messing up the logs on Firebase. It's
-// always good to handle errors in a tidy way when they can happen often.
-return response
-  .status(500)
-  .send(
-    `Unable to retrieve flight with tail number '${tailNumber}' found`
-  );
-});
 });
