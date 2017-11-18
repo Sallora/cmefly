@@ -1,5 +1,8 @@
 const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+admin.initializeApp(functions.config().firebase);
 const request = require("request-promise");
+
 /*
  * Environmental variables
  * ---
@@ -7,7 +10,6 @@ const request = require("request-promise");
  * (reference here: https://firebase.google.com/docs/functions/config-env)
  * If the variable is not set, it falls back to default (useful for local development)
  */
-console.log("config", functions.config());
 const config = functions.config().cmefly;
 const API_ENDPOINT = "https://flightxml.flightaware.com/json/FlightXML3";
 const API_KEY = "salomidoulora";
@@ -83,4 +85,33 @@ exports.GetFlightDetails = functions.https.onRequest((request, response) => {
           `Unable to retrieve flight with tail number '${tailNumber}' found`
         );
     });
+});
+
+/*
+ * Log a flight and notify watcher
+ * ---
+ * Explanation incoming
+ */
+exports.ShareFlight = functions.https.onRequest((request, response) => {
+  response.set("Access-Control-Allow-Origin", "*");
+  response.set("Access-Control-Allow-Methods", "GET, POST");
+
+  // Parse the request body from JSON to Javascript
+  const jsonData = JSON.parse(request.body);
+  const flightId = jsonData.flightId;
+
+  // Ensure there is a flight ID
+  if (!flightId) {
+    return response.status(422).send("No flight ID was sent to the function");
+  }
+
+  // Write to the database
+  admin
+    .database()
+    .ref(`/flights/`)
+    .set({
+      flightId: flightId
+    });
+
+  return response.sendStatus(200);
 });
