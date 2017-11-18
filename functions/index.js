@@ -106,12 +106,13 @@ exports.ShareFlight = functions.https.onRequest((request, response) => {
   }
 
   // Write to the database
-  admin
+  const dbRow = admin
     .database()
     .ref(`/flights/`)
-    .set({
-      flightId: flightId
+    .push({
+      flightId: flightId,
+      date_created: new Date()
     });
 
-  return response.sendStatus(200);
+  return response.status(200).send(JSON.stringify({ key: dbRow.key }));
 });
