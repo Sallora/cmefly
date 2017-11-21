@@ -144,3 +144,43 @@ exports.ShareFlight = functions.https.onRequest((request, response) => {
       .send(JSON.stringify({ key: dbRow.key, url: shortUrl.id }));
   });
 });
+
+/*
+ * Retrieve a flight from a key
+ * ---
+ * This endpoint takes a database key and returns the flight id, and then
+ * data returns the flight data from the FlightAware API.
+ * 
+ * We use this when in watcher mode.
+ */
+exports.RetrieveFlightInfo = functions.https.onRequest((request, response) => {
+  response.set("Access-Control-Allow-Origin", "*");
+  response.set("Access-Control-Allow-Methods", "GET, POST");
+
+  const jsonData = JSON.parse(request.body);
+
+  // Lookup the database row in our firebase database
+  // ... this syntax is kind of weird because the Firebase realtime database
+  // is in realtime and uses a weird promise setup.
+  admin
+    .database()
+    .ref(`/flights/${jsonData.flightRowKey}`)
+    .once("value")
+    .then(flightRow => {
+      const flightId = flightRow.val().flightId;
+
+      // Fetch details about the flight from the FlightAware API
+      fetchFlights(flightId).then(flightData => {
+        return response
+          .status(200)
+          .send(JSON.stringify(flightData.FlightInfoStatusResult.flights[0]));
+      });
+    })
+    .catch(err => {
+      return response
+        .status(400)
+        .send(
+          "Unable to find flight with database key: " + jsonData.flightRowKey
+        );
+    });
+});
