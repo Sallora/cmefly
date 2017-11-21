@@ -10,10 +10,15 @@ const request = require("request-promise");
  * (reference here: https://firebase.google.com/docs/functions/config-env)
  * If the variable is not set, it falls back to default (useful for local development)
  */
-const config = functions.config().cmefly;
-const API_ENDPOINT = "https://flightxml.flightaware.com/json/FlightXML3";
-const API_KEY = "salomidoulora";
-const API_SECRET = "cffde6e3dd2793be4e7864dd7ff8114d16a66abd";
+const config = functions.config().cmefly || {};
+const API_ENDPOINT =
+  config.API_ENDPOINT || "https://flightxml.flightaware.com/json/FlightXML3";
+const API_KEY = config.API_KEY || "salomidoulora";
+const API_SECRET =
+  config.API_SECRET || "cffde6e3dd2793be4e7864dd7ff8114d16a66abd";
+const DOMAIN = config.DOMAIN || "http://localhost:3000";
+const GOOGLE_API_KEY =
+  config.GOOGLE_API_KEY || "AIzaSyB5MaKxVvckCfSqf1tqeG4O5IfMfEvgAx4";
 
 /*
  * Fetch Flights
@@ -88,6 +93,23 @@ exports.GetFlightDetails = functions.https.onRequest((request, response) => {
 });
 
 /*
+ * Shorten URL
+ * ---
+ * Use Google's URL shortening API to take our long database key
+ * and shorten it into something shareable
+ */
+function getShortUrl(url) {
+  return request(
+    `https://www.googleapis.com/urlshortener/v1/url?key=${GOOGLE_API_KEY}`,
+    {
+      method: "POST",
+      json: true,
+      body: { longUrl: url }
+    }
+  );
+}
+
+/*
  * Log a flight and notify watcher
  * ---
  * Explanation incoming
@@ -98,12 +120,13 @@ exports.ShareFlight = functions.https.onRequest((request, response) => {
 
   // Parse the request body from JSON to Javascript
   const jsonData = JSON.parse(request.body);
-  const flightId = jsonData.flightId;
 
   // Ensure there is a flight ID
-  if (!flightId) {
+  if (!"flightId" in jsonData) {
     return response.status(422).send("No flight ID was sent to the function");
   }
+
+  const flightId = jsonData.flightId;
 
   // Write to the database
   const dbRow = admin
@@ -114,5 +137,10 @@ exports.ShareFlight = functions.https.onRequest((request, response) => {
       date_created: new Date()
     });
 
-  return response.status(200).send(JSON.stringify({ key: dbRow.key }));
+  // Shorten the URL
+  getShortUrl(`${DOMAIN}/${dbRow.key}`).then(shortUrl => {
+    return response
+      .status(200)
+      .send(JSON.stringify({ key: dbRow.key, url: shortUrl.id }));
+  });
 });

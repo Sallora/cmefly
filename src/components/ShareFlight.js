@@ -7,17 +7,17 @@ class ShareFlight extends Component {
   };
 
   shareFlight(flightId) {
-    fetch(`http://localhost:5000/finaljs-c5415/us-central1/ShareFlight`, {
+    fetch(`${process.env.REACT_APP_ENDPOINT}/ShareFlight`, {
       method: "POST",
       body: JSON.stringify({ flightId })
     })
       .then(response => response.json())
-      .then(json => this.setState({ key: json.key }));
+      .then(data => this.setState({ ...data }));
   }
 
   render() {
     const { flightId } = this.props;
-    const { key } = this.state;
+    const { key, url } = this.state;
 
     return (
       <div className="share-flight">
@@ -25,7 +25,7 @@ class ShareFlight extends Component {
         <button onClick={() => this.shareFlight(flightId)}>
           Share this flight
         </button>
-        {key && <h1>Your share key is: {key}</h1>}
+        {key && <h1>Your share key is: {url}</h1>}
       </div>
     );
   }
