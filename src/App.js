@@ -34,7 +34,17 @@ class App extends Component {
     // to render the correct response to the screen.
     return (
       <div className="app">
-        {mode === "watcher" ? this.renderWatcherMode() : this.renderFlyerMode()}
+        <nav className="navbar navbar-dark bg-dark">
+          <span className="navbar-brand">
+            cMeFly
+            <span className="ml-2">✈️</span>
+          </span>
+        </nav>
+        <main className="container">
+          {mode === "watcher"
+            ? this.renderWatcherMode()
+            : this.renderFlyerMode()}
+        </main>
       </div>
     );
   }
@@ -44,11 +54,16 @@ class App extends Component {
 
     return (
       <div className="flyer">
-        <GetFlightDetails
-          onSelectFlight={selectedFlight =>
-            this.setState({ flightToShare: selectedFlight })}
-        />
-        {flightToShare && <ShareFlight flightId={flightToShare} />}
+        <h1>Share your flight:</h1>
+        <hr />
+        {!flightToShare ? (
+          <GetFlightDetails
+            onSelectFlight={selectedFlight =>
+              this.setState({ flightToShare: selectedFlight })}
+          />
+        ) : (
+          <ShareFlight flightId={flightToShare} />
+        )}
       </div>
     );
   }
@@ -58,7 +73,7 @@ class App extends Component {
 
     return (
       <div className="watcher">
-        <h2>Watcher mode</h2>
+        <h2>Flight overview</h2>
         <FlightInfo flightRowKey={flightRowKey} />
       </div>
     );

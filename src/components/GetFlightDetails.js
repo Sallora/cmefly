@@ -8,21 +8,36 @@ import React, { Component } from "react";
 
 class FlightItem extends Component {
   render() {
-    const { faFlightID, origin, destination } = this.props.flight;
+    const {
+      faFlightID,
+      airline,
+      origin,
+      destination,
+      estimated_departure_time
+    } = this.props.flight;
 
     return (
-      <div className="flight-item">
-        <strong>{faFlightID}</strong>
-        <br />
-        {origin.airport_name} -> {destination.airport_name}
-        <button
-          onClick={() => {
-            this.props.onSelected(faFlightID);
-          }}
-        >
-          Select Flight
-        </button>
-      </div>
+      <li className="list-group-item">
+        <div className="d-flex">
+          <div className="p-2">
+            <strong>{airline}</strong>
+            <small> {faFlightID}</small>
+            <br />
+            {origin.airport_name} &rarr; {destination.airport_name}
+            <br />
+            Departs {estimated_departure_time.date} at{" "}
+            {estimated_departure_time.time}
+          </div>
+          <button
+            className="btn btn-outline-primary ml-auto p-2"
+            onClick={() => {
+              this.props.onSelected(faFlightID);
+            }}
+          >
+            Share this flight
+          </button>
+        </div>
+      </li>
     );
   }
 }
@@ -88,7 +103,7 @@ class GetFlightDetails extends Component {
     const { onSelectFlight } = this.props;
 
     return (
-      <div className="flight-items">
+      <ul className="list-group">
         {flightData.map((flight, i) => {
           return (
             <FlightItem
@@ -101,7 +116,7 @@ class GetFlightDetails extends Component {
             />
           );
         })}
-      </div>
+      </ul>
     );
   }
 
@@ -110,29 +125,34 @@ class GetFlightDetails extends Component {
 
     return (
       <div>
-        <h1>Get flight number</h1>
+        {isFetching && <div>Finding flights...</div>}
 
-        {isFetching && <div>Fetching flight...</div>}
-
-        {!isFetching && (
-          <div>
-            <input
-              type="text"
-              defaultValue={tailNumber}
-              onChange={evt => {
-                this.setState({ tailNumber: evt.target.value });
-              }}
-            />
-            <button
-              onClick={() => {
-                this.setState({ isFetching: true, flightData: null });
-                this.fetchFlightDetails(tailNumber);
-              }}
-            >
-              Get Flight
-            </button>
-          </div>
-        )}
+        {!isFetching &&
+          !flightData && (
+            <div>
+              <label>Enter flight number (tail number):</label>
+              <div className="form-group">
+                <input
+                  type="text"
+                  className="form-control form-control-lg"
+                  defaultValue={tailNumber}
+                  onChange={evt => {
+                    this.setState({ tailNumber: evt.target.value });
+                  }}
+                />
+              </div>
+              <button
+                className="btn-lg btn-primary"
+                onClick={() => {
+                  this.setState({ isFetching: true, flightData: null });
+                  this.fetchFlightDetails(tailNumber);
+                }}
+              >
+                Search for flight
+                <span className="ml-2">🔎</span>
+              </button>
+            </div>
+          )}
 
         {flightData && this.renderFlightData()}
       </div>
